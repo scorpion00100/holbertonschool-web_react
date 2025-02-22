@@ -20,14 +20,14 @@ jobs:
 
       - name: Install dependencies
         working-directory: react_intro/task_4/dashboard
-        run: pnpm install
+        run: npm install
 
       - name: Build project
         working-directory: react_intro/task_4/dashboard
-        run: pnpm run build
+        run: npm run build
 
       - name: Deploy to GitHub Pages
         working-directory: react_intro/task_4/dashboard
-        run: pnpm run deploy
+        run: npm run deploy
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
