@@ -1,0 +1,46 @@
+* {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.App-header {
+  display: flex;
+  align-items: center;
+  border-bottom: #E0354B solid 3px;
+}
+
+.App-header img {
+  width: 200px;
+  height: 200px;
+}
+
+.App-header h1 {
+  color: #E0354B;
+}
+
+.App-body p, label{
+  margin-top: 8%;
+  margin-left: 8%;
+}
+
+.App-body input {
+  margin-left: 10px;
+  border: 1px solid #ababab;
+  border-radius: 5%;
+}
+
+.App-body button{
+  margin-left: 10px;
+  cursor: pointer;
+  border: 1px solid #ababab;
+  border-radius: 10%;
+  background-color: white;
+}
+.App-body {
+  border-bottom: #E0354B solid 3px;
+  padding-bottom: 200px;
+}
+
+.App-footer {
+  text-align: center;
+  font-style: italic;
+}
