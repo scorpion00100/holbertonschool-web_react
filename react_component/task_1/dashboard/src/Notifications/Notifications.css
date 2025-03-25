@@ -1,43 +1,12 @@
-.Notification_components {
-  display: flex;
-  flex-direction: column;
-
+.notifications {
+    border: 2px #e1003c dashed;
+    padding-left: 20px;
 }
 
-.Notification_components_title {
-  text-align: right;
+.notifications ul {
+    color: #e1003c;
 }
 
-.Notifications {
-  border: 3px dashed #E1003C;
-  padding: 20px;
-}
-
-.Notifications ul li[data-notification-type="default"] {
-  color: blue;
-}
-
-.Notifications ul li[data-notification-type="urgent"] {
-  color: red;
-}
-
-strong {
-  font-weight: 900;
-}
-
-.close-button {
-  float: right;
-  border: none;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  background: transparent;
-}
-
-.close-button:hover {
-  opacity: 0.7;
-}
-
-.close-button img {
-  width: 100%;
+.notifications ul li[data-priority=default]{
+    color: blue;
 }
