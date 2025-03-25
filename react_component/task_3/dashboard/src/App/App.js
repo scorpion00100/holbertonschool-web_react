@@ -7,13 +7,15 @@ import { getLatestNotification } from '../utils/utils';
 import './App.css';
 import CourseList from '../CourseList/CourseList';
 import PropTypes from 'prop-types';
-
-
+import BodySection from '../BodySection/BodySection';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
 class App extends Component {
   constructor(props) {
     super(props);
     this.handleLogout = this.handleLogout.bind(this);
   }
+
+
   componentDidMount() {
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this.handleLogout);
@@ -25,6 +27,8 @@ class App extends Component {
       window.removeEventListener('keydown', this.handleLogout);
     }
   }
+
+
   handleLogout(e) {
     if (e.ctrlKey && e.key === 'h') {
       e.preventDefault();
@@ -58,8 +62,20 @@ class App extends Component {
           </div>
 
           <div className="App-body border">
-            {isLoggedIn === false ? <Login /> : <CourseList listCourses={listCourses} />}
+            {isLoggedIn === false ?
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <Login />
+              </BodySectionWithMarginBottom>
+              :
+              <BodySectionWithMarginBottom title="Course list">
+                <CourseList listCourses={listCourses} />
+              </BodySectionWithMarginBottom>
+            }
           </div>
+
+          <BodySection title="News from the School">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          </BodySection>
 
           <div className="App-footer border">
             <Footer />
@@ -72,7 +88,7 @@ class App extends Component {
 
 App.defaultProps = {
   isLoggedIn: false,
-  logOut: () => {},
+  logOut: () => { },
 };
 
 App.propTypes = {

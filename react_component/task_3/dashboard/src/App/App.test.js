@@ -6,7 +6,6 @@ import CourseList from '../CourseList/CourseList';
 
 describe('App Component', () => {
 
-
   let wrapper;
 
   beforeAll(() => {
@@ -20,5 +19,6 @@ describe('App Component', () => {
   it('includes CourseList component', () => {
     expect(wrapper.find(CourseList).exists()).toBeTruthy();
   });
+
 
 });
