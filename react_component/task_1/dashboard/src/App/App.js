@@ -14,7 +14,6 @@ class App extends Component {
     super(props);
     this.handleLogout = this.handleLogout.bind(this);
   }
-
   componentDidMount() {
     if (typeof window !== 'undefined') {
       window.addEventListener('keydown', this.handleLogout);
@@ -26,7 +25,6 @@ class App extends Component {
       window.removeEventListener('keydown', this.handleLogout);
     }
   }
-
   handleLogout(e) {
     if (e.ctrlKey && e.key === 'h') {
       e.preventDefault();
