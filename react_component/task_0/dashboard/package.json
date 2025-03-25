@@ -1,47 +1,45 @@
 {
     "name": "dashboard",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
     "scripts": {
-        "start": "webpack-dev-server --mode development --config config/webpack.config.js",
-        "build": "webpack --config config/webpack.config.js",
-        "test": "jest --maxWorkers 1",
-        "test-watch": "jest --watch"
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "eslint .",
+        "preview": "vite preview"
     },
     "dependencies": {
-        "prop-types": "^15.8.1",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-scripts": "5.0.1"
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
     "devDependencies": {
-        "@babel/core": "^7.21.8",
-        "@babel/preset-env": "^7.21.5",
-        "@babel/preset-react": "^7.18.6",
-        "babel-loader": "^9.1.2",
-        "css-loader": "^6.7.3",
-        "file-loader": "^6.2.0",
-        "enzyme": "^3.11.0",
-        "enzyme-adapter-react-16": "^1.15.7",
-        "image-webpack-loader": "^8.1.0",
-        "jest": "^27.5.1",
-        "style-loader": "^3.3.2",
-        "webpack": "^5.82.0",
-        "webpack-cli": "^5.1.1",
-        "webpack-dev-server": "^4.15.0"
+        "@babel/preset-env": "^7.26.0",
+        "@babel/preset-react": "^7.26.3",
+        "@eslint/js": "^9.15.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.1.0",
+        "@testing-library/user-event": "^14.5.2",
+        "@types/react": "^18.3.12",
+        "@types/react-dom": "^18.3.1",
+        "@vitejs/plugin-react": "^4.3.4",
+        "eslint": "^9.15.0",
+        "eslint-plugin-react": "^7.37.2",
+        "eslint-plugin-react-hooks": "^5.0.0",
+        "eslint-plugin-react-refresh": "^0.4.14",
+        "globals": "^15.12.0",
+        "identity-obj-proxy": "^3.0.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "vite": "^6.0.1"
     },
     "jest": {
+        "testEnvironment": "jsdom",
         "moduleNameMapper": {
-            "\\.(css|scss)$": "<rootDir>/__mocks__/fileMock.js",
-            "\\.(png|jpg)$": "<rootDir>/__mocks__/fileMock.js"
+            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/fileTransformer.js",
+            "^.+\\.(css|less|scss)$": "identity-obj-proxy"
         },
-        "setupFiles": [
-            "<rootDir>/config/setupTests.js"
-        ],
-        "testEnvironment": "jsdom"
+        "setupFilesAfterEnv": [
+            "./setupTests.js"
+        ]
     }
 }
