@@ -1,21 +1,69 @@
-import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { test, expect } from '@jest/globals';
 import CourseListRow from './CourseListRow';
 
-describe('CourseListRow Component', () => {
-    it('renders one cell with colspan = 2 when textSecondCell does not exist (isHeader=true)', () => {
-        const wrapper = shallow(<CourseListRow isHeader={true} textFirstCell="Header" />);
-        expect(wrapper.find('th')).toHaveLength(1);
-        expect(wrapper.find('th').prop('colSpan')).toEqual('2');
-    });
+test('Should display 2 "th" elements when "isHeader" is true and "textSecondCell" is not null', () => {
+    render(
+        <table>
+            <tbody>
+                <CourseListRow isHeader={true} textFirstCell="First" textSecondCell="Second" />
+            </tbody>
+        </table>
+    );
+    const trElement = screen.getByRole('row');
+    expect(trElement).toHaveStyle({ backgroundColor: 'rgb(222, 181, 180, 0.27)' });
+    const thElements = screen.getAllByRole('columnheader');
+    expect(thElements).toHaveLength(2);
+});
 
-    it('renders two cells when textSecondCell is present (isHeader=true)', () => {
-        const wrapper = shallow(<CourseListRow isHeader={true} textFirstCell="Header" textSecondCell="Second Header" />);
-        expect(wrapper.find('th')).toHaveLength(2);
-    });
+test('Should display 1 "th" element with colSpan=2 when "isHeader" is true and "textSecondCell" is null', () => {
+    render(
+        <table>
+            <tbody>
+                <CourseListRow isHeader={true} textFirstCell="First" textSecondCell={null} />
+            </tbody>
+        </table>
+    );
+    const trElement = screen.getByRole('row');
+    expect(trElement).toHaveStyle({ backgroundColor: 'rgb(222, 181, 180, 0.27)' });
+    const thElement = screen.getByRole('columnheader');
+    expect(thElement).toHaveAttribute('colSpan', '2');
+});
 
-    it('renders correctly two td elements within a tr element (isHeader=false)', () => {
-        const wrapper = shallow(<CourseListRow isHeader={false} textFirstCell="Row" textSecondCell="Data" />);
-        expect(wrapper.find('td')).toHaveLength(2);
-    });
+test('Should display 2 "td" elements when "isHeader" is false', () => {
+    render(
+        <table>
+            <tbody>
+                <CourseListRow isHeader={false} textFirstCell="First" textSecondCell="Second" />
+            </tbody>
+        </table>
+    );
+    const trElement = screen.getByRole('row');
+    expect(trElement).toHaveStyle({ backgroundColor: 'rgb(245, 245, 245, 0.67)' });
+    const tdElements = screen.getAllByRole('cell');
+    expect(tdElements).toHaveLength(2);
+});
+
+test('Should render background color #deb5b545 when isHeader is true', () => {
+    render(
+        <table>
+            <tbody>
+                <CourseListRow isHeader={true} textFirstCell="Header" textSecondCell="SubHeader" />
+            </tbody>
+        </table>
+    );
+    const trElement = screen.getByRole('row');
+    expect(trElement).toHaveStyle({ backgroundColor: 'rgb(222, 181, 180, 0.27)' });
+});
+
+test('Should render background color #f5f5f5ab when isHeader is false', () => {
+    render(
+        <table>
+            <tbody>
+                <CourseListRow isHeader={false} textFirstCell="Row1" textSecondCell="Row2" />
+            </tbody>
+        </table>
+    );
+    const trElement = screen.getByRole('row');
+    expect(trElement).toHaveStyle({ backgroundColor: 'rgb(245, 245, 245, 0.67)' });
 });
