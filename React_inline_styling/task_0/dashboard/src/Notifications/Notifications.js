@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
+import './Notifications.css';
 import NotificationItem from './NotificationItem';
 import NotificationItemShape from './NotificationItemShape';
 
@@ -24,6 +24,7 @@ class Notifications extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    // Only update if the new listNotifications has more items than the current list
     return (
       nextProps.listNotifications.length > this.props.listNotifications.length
     )
@@ -32,10 +33,10 @@ class Notifications extends React.Component {
   render() {
     const { displayDrawer, listNotifications } = this.props
     return (
-      <div className={css(styles.menuItem)}>
+      <div className="menuItem">
         <p>Your notifications</p>
         {displayDrawer ? (
-          <div className={css(styles.notifications)}>
+          <div className="Notifications">
             <button
               style={{
                 position: 'absolute',
@@ -77,22 +78,5 @@ class Notifications extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-  notifications: {
-    position: 'absolute',
-    border: 'dashed #cf4550 2px',
-    padding: '10px',
-    width: '30%',
-    right: '1rem',
-    top: '4rem',
-  },
-  menuItem: {
-    display: 'flex',
-    justifyContent: 'right',
-    padding: '5px',
-    marginRight: '10px',
-  },
-})
 
 export default Notifications;

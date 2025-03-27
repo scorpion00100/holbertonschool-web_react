@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
+import './App.css';
 import Header from '../Header/Header';
 import Login from '../Login/Login';
 import Footer from '../Footer/Footer';
@@ -57,7 +57,7 @@ class App extends React.Component {
     return (
       <>
         <LoginWithNotifications listNotifications={listNotifications} />
-        <div className={css(styles.app)}>
+        <div className="App">
           <Header />
           {this.props.isLoggedIn ? (
             <BodySectionWithMarginBottom title="Course list">
@@ -73,29 +73,11 @@ class App extends React.Component {
               Here you will find the latest updates and news from the school.
             </p>
           </BodySection>
-          <div className={css(styles.footer)}>
-            <Footer isIndex={isIndex} />
-          </div>
+          <Footer isIndex={isIndex} />
         </div>
       </>
     )
   }
 }
-
-// Define styles using Aphrodite
-const styles = StyleSheet.create({
-  app: {
-  },
-  footer: {
-    borderTop: '4px solid #cf4550',
-    width: '100%',
-    bottom: '0',
-    left: '0',
-    textAlign: 'center',
-    fontSize: '20px',
-    fontStyle: 'italic',
-    fontFamily: 'Arial, sans-serif',
-  },
-});
 
 export default App;

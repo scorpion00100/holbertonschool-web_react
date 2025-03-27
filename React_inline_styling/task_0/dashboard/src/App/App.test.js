@@ -1,34 +1,35 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import App from './App';
+import Notifications from '../Notifications/Notifications';
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 import Login from '../Login/Login';
+import Footer from '../Footer/Footer';
 import CourseList from '../CourseList/CourseList';
-import { StyleSheetTestUtils, css } from 'aphrodite';
-import { StyleSheet } from 'aphrodite';
 
 describe('<App />', () => {
-  // Désactiver l'injection de styles Aphrodite pour éviter des erreurs pendant les tests
-  StyleSheetTestUtils.suppressStyleInjection();
-
-  afterAll(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  it('renders without crashing', () => {
+    shallow(<App />);
   });
 
-  it('renders without crashing', () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.exists()).toBe(true);
+  it('contains the Notifications component', () => {
+    const wrapper = shallow(<App />)
+    expect(wrapper.find(Notifications)).toHaveLength(1);
   });
 
   it('contains the Header component', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.find(Header).length).toBe(1);
+    expect(wrapper.find(Header)).toHaveLength(1);
+  });
+
+  it('contains the Login component', () => {
+    const wrapper = shallow(<App />);
+    expect(wrapper.find(Login)).toHaveLength(1);
   });
 
   it('contains the Footer component', () => {
     const wrapper = shallow(<App />);
-    expect(wrapper.find(Footer).length).toBe(1);
+    expect(wrapper.find(Footer)).toHaveLength(1);
   });
 
   it('should not display CourseList when isLoggedIn is false', () => {
@@ -36,58 +37,46 @@ describe('<App />', () => {
     expect(wrapper.find(CourseList).length).toBe(0);
   });
 
-  it('should display CourseList when isLoggedIn is true', () => {
-    const wrapper = shallow(<App isLoggedIn={true} />);
-    expect(wrapper.find(CourseList).length).toBe(1);
+  describe('when isLoggedIn is true', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      wrapper = shallow(<App isLoggedIn={true} />);
+    });
+
+    it('should not include the Login component', () => {
+      expect(wrapper.find(Login).length).toBe(0);
+    });
+
+    it('should include the CourseList component', () => {
+      expect(wrapper.find(CourseList).length).toBe(1);
+    });
   });
 
-  it('should not display the Login component when isLoggedIn is true', () => {
-    const wrapper = shallow(<App isLoggedIn={true} />);
-    expect(wrapper.find(Login).length).toBe(0);
-  });
+  describe('Keyboard event tests', () => {
+    it('calls logOut function and displays alert when Ctrl+H is pressed', () => {
+      const mockLogOut = jest.fn()
+      const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {})
 
-  it('calls logOut function and displays alert when Ctrl+H is pressed', () => {
-    const mockLogOut = jest.fn();
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+      // Simuler l'événement keydown
+      const wrapper = shallow(<App logOut={mockLogOut} />)
+      const instance = wrapper.instance()
 
-    const wrapper = shallow(<App logOut={mockLogOut} />);
-    const instance = wrapper.instance();
-    instance.componentDidMount();
+      // Simuler l'ajout de l'événement
+      instance.componentDidMount() // Ajoute l'écouteur d'événements
 
-    const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'h' });
-    document.dispatchEvent(event);
+      // Créer un événement simulé
+      const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'h' })
+      document.dispatchEvent(event)
 
-    expect(alertMock).toHaveBeenCalledWith('Logging you out');
-    expect(mockLogOut).toHaveBeenCalled();
+      // Vérifier que alert et logOut ont été appelés
+      expect(alertMock).toHaveBeenCalled()
+      expect(mockLogOut).toHaveBeenCalled()
 
-    alertMock.mockRestore();
-  });
+      // Restaurer les mocks
+      alertMock.mockRestore()
+    })
+  })
 
-  it('applies the correct footer styles', () => {
-    const wrapper = shallow(<App />);
-    const footer = wrapper.find('div').last();
-
-    expect(footer.hasClass(css(StyleSheet.create({
-      footer: {
-        borderTop: '4px solid #cf4550',
-        width: '100%',
-        bottom: '0',
-        left: '0',
-        textAlign: 'center',
-        fontSize: '20px',
-        fontStyle: 'italic',
-        fontFamily: 'Arial, sans-serif',
-      }
-    }).footer))).toBe(true);
-  });
-
-  it('applies the correct app styles', () => {
-    const wrapper = shallow(<App />);
-    const appDiv = wrapper.find('div').first();
-
-    expect(appDiv.hasClass(css(StyleSheet.create({
-      app: {}
-    }).app))).toBe(true);
-  });
 
 });

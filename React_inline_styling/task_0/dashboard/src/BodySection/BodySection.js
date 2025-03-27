@@ -1,5 +1,6 @@
 import React from "react"
 import PropTypes from 'prop-types'
+import './BodySection.css'
 
 class BodySection extends React.Component {
   static propTypes = {
