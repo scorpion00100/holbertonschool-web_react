@@ -2,12 +2,13 @@ import React from 'react';
 import './Footer.css';
 import { getFullYear, getFooterCopy } from '../utils/utils';
 
-function Footer() {
-
+function Footer({ isIndex }) {
   return (
-    <>
-      <footer className="App-footer">Copyright {getFooterCopy()} &copy; {getFullYear()}</footer>
-    </>
+    <footer className="App-footer">
+      <p>
+        Copyright {getFullYear()} - {getFooterCopy(isIndex)}
+      </p>
+    </footer>
   );
 }
 

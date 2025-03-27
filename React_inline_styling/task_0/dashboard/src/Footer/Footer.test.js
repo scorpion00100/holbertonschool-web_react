@@ -1,15 +1,20 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import Footer from './Footer';
+import React from 'react'
+import { shallow } from 'enzyme'
+import Footer from './Footer'
+import { getFullYear, getFooterCopy } from '../utils/utils'
+
+jest.mock('../utils/utils', () => ({
+  getFullYear: jest.fn(() => 2024),
+  getFooterCopy: jest.fn(() => 'Holberton School')
+}))
 
 describe('Footer Component', () => {
-  it('renders without crashing', () => {
-    const wrapper = shallow(<Footer />);
-    expect(wrapper.exists()).toBeTruthy();
-  });
+  it('should render without crashing', () => {
+    shallow(<Footer isIndex={true} />)
+  })
 
-  it('renders the text "Copyright"', () => {
-    const wrapper = shallow(<Footer />);
-    expect(wrapper.text()).toContain('Copyright');
-  });
-});
+  it('should render the text "Copyright"', () => {
+    const wrapper = shallow(<Footer isIndex={true} />)
+    expect(wrapper.text()).toContain('Copyright')
+  })
+})

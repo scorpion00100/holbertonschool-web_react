@@ -1,12 +1,23 @@
-.notifications {
-    border: 2px #e1003c dashed;
-    padding-left: 20px;
+.Notifications {
+  position: absolute;
+    border:dashed #cf4550 2px;
+    padding: 10px;
+    width: 30%;
+    right: 1rem;
+    top: 4rem;
 }
 
-.notifications ul {
-    color: #e1003c;
+.menuItem {
+  display: flex;
+  justify-content: right;
+  padding: 5px;
+  margin-right: 10px;
 }
 
-.notifications ul li[data-priority=default]{
-    color: blue;
+.Notifications li[data-notification-type="default"] {
+  color: #180C5F;
+}
+
+.Notifications li[data-notification-type="urgent"] {
+  color: red;
 }
