@@ -1,4 +1,5 @@
 import React from 'react'
+import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types'
 
 class NotificationItem extends React.PureComponent {
@@ -29,9 +30,12 @@ class NotificationItem extends React.PureComponent {
 
   render() {
     const { type, value, html } = this.props
+    const style = type === 'urgent' ? styles.urgent : styles.default;
+
     if (html) {
       return (
         <li
+          className={css(style)}
           data-notification-type={type}
           onClick={this.handleClick}
           dangerouslySetInnerHTML={html}
@@ -39,12 +43,21 @@ class NotificationItem extends React.PureComponent {
       )
     } else {
       return (
-        <li data-notification-type={type} onClick={this.handleClick}>
+        <li  className={css(style)} data-notification-type={type} onClick={this.handleClick}>
           {value}
         </li>
       )
     }
   }
 }
+
+const styles = StyleSheet.create({
+  default: {
+    color: '#180C5F',
+  },
+  urgent: {
+    color: 'red',
+  }
+});
 
 export default NotificationItem

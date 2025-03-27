@@ -2,6 +2,13 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import CourseList from './CourseList';
 import CourseListRow from './CourseListRow';
+import { StyleSheetTestUtils, StyleSheet, css } from 'aphrodite';
+
+StyleSheetTestUtils.suppressStyleInjection();
+
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
 describe('CourseList Component', () => {
   it('renders CourseList component without crashing', () => {
@@ -56,6 +63,24 @@ describe('CourseList Component', () => {
 
       expect(rows.at(4).prop('textFirstCell')).toEqual('React');
       expect(rows.at(4).prop('textSecondCell')).toEqual(40);
+    });
+  });
+
+  describe('Styles', () => {
+    it('should apply the correct styles', () => {
+      const wrapper = shallow(<CourseList />);
+      const div = wrapper.find('table');
+      const expectedClassName = css(StyleSheet.create({
+        courseList: {
+          border: 'solid 1px rgb(227, 220, 220)',
+          width: '90%',
+          textAlign: 'left',
+          marginTop: '30px',
+          marginLeft: '5%',
+          fontFamily: `'Times New Roman', Times, serif`,
+        },
+      }).courseList);
+      expect(div.hasClass(expectedClassName)).toBe(true);
     });
   });
 });

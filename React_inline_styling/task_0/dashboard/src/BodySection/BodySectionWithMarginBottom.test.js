@@ -1,28 +1,36 @@
-import React from 'react'
-import { shallow } from 'enzyme'
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom'
-import BodySection from './BodySection'
+import React from 'react';
+import { shallow } from 'enzyme';
+import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
+import BodySection from './BodySection';
+import { StyleSheetTestUtils, StyleSheet, css } from 'aphrodite';
+
+StyleSheetTestUtils.suppressStyleInjection();
+
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
 describe('BodySectionWithMarginBottom Component', () => {
-  it('should render correctly and pass props to BodySection', () => {
+  it('renders correctly a BodySection component and passes props correctly', () => {
     const wrapper = shallow(
-      <BodySectionWithMarginBottom title="test title">
+      <BodySectionWithMarginBottom title='test title'>
         <p>test children node</p>
       </BodySectionWithMarginBottom>
-    )
+    );
 
-    // Check that it contains a BodySection component
-    expect(wrapper.find(BodySection).length).toBe(1)
+    const bodySection = wrapper.find(BodySection);
+    expect(bodySection).toHaveLength(1);
 
-    // Check that the BodySection component has the correct title prop
-    expect(wrapper.find(BodySection).prop('title')).toBe('test title')
+    expect(bodySection.props().title).toEqual('test title');
 
-    // Check that the BodySection component renders the children correctly
-    expect(wrapper.find(BodySection).dive().find('p').text()).toBe(
-      'test children node'
-    )
+    expect(bodySection.dive().find('p').text()).toEqual('test children node');
 
-    // Check that the div has the correct class
-    expect(wrapper.find('div.bodySectionWithMargin').length).toBe(1)
-  })
-})
+    const div = wrapper.find('div');
+    const expectedClassName = css(StyleSheet.create({
+      bodySectionWithMargin: {
+        marginBottom: '40px',
+      },
+    }).bodySectionWithMargin);
+    expect(div.hasClass(expectedClassName)).toBe(true);
+  });
+});
