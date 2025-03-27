@@ -1,17 +1,22 @@
-.courses {
-    margin: 130px auto;
+#CourseList{
+    border: 1px solid lightgray;
+    font-size: large;
+    margin : 0 auto;
     width: 90%;
-    height: 33vh
+    margin-top: 20px;
+}
+.CourseListRow_title{
+    border-bottom: 3px solid lightgray;
+    text-align: center;
+    font-weight: bolder;
+    font-size: x-large;
+    padding: 10px 0;
 }
 
-#CourseList {
-    width: 100%;
-}
-
-table,
-th,
-tr,
-td {
-    border-collapse: collapse;
-    border: 2px solid rgb(161, 161, 161);
+.CourseListRow {
+    border-bottom: 3px solid lightgray;
+    text-align: start;
+    font-weight: bolder;
+    font-size: larger;
+    padding: 5px 0;
 }
