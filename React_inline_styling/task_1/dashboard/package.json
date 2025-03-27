@@ -29,6 +29,7 @@
         "webpack-dev-server": "^5.0.4"
     },
     "dependencies": {
+        "aphrodite": "^2.4.0",
         "cheerio": "^1.0.0-rc.12",
         "prop-types": "^15.8.1",
         "react": "^16.14.0",
