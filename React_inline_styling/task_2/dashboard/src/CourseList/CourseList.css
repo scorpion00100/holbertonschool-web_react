@@ -1,0 +1,17 @@
+#CourseList {
+  border: solid 1px rgb(227, 220, 220);
+  width: 90%;
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 5%;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+#CourseList thead tr:first-child {
+  text-align: center;
+}
+
+#CourseList thead th {
+  padding: .4rem 0;
+  border-bottom: solid 2px rgb(227, 220, 220);
+}

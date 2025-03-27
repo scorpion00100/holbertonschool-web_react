@@ -1,0 +1,14 @@
+.App-footer {
+  border-top: 4px solid #cf4550; /* Red line */
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+}
+
+.App-footer p {
+  text-align: center;
+  font-size: 20px;
+  font-style: italic;
+  font-family: Arial, sans-serif;
+}
