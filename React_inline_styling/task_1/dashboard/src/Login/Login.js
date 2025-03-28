@@ -1,7 +1,20 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { StyleSheet, css, StyleSheetTestUtils } from 'aphrodite';
-import Login from './Login';
+import { StyleSheet, css } from 'aphrodite';
+
+function Login() {
+  return (
+      <div className={css(styles.body)}>
+        <p>Login to access the full dashboard</p>
+        <form>
+          <label className={css(styles.form)} htmlFor="email">Email:</label>
+          <input className={css(styles.form, styles.border)} type="email" id="email" name="email" />
+          <label className={css(styles.form)} htmlFor="password">Password:</label>
+          <input className={css(styles.form, styles.border)} type="password" id="password" name="password" />
+          <button className={css(styles.button)} type="submit">OK</button>
+        </form>
+      </div>
+  );
+}
 
 const styles = StyleSheet.create({
   body: {
@@ -22,56 +35,5 @@ const styles = StyleSheet.create({
   border: {
     border: '1px solid #ccc',
   }
-});
-
-const bodyClassName = css(styles.body);
-const buttonClassName = css(styles.button);
-const formClassName = css(styles.form);
-const formBorderClassName = css(styles.form, styles.border);
-
-describe('Login Component', () => {
-  beforeAll(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
-
-  afterAll(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
-
-  it('should render without crashing', () => {
-    shallow(<Login />);
-  });
-
-  it('should render 2 input tags and 2 label tags', () => {
-    const wrapper = shallow(<Login />);
-    expect(wrapper.find('input').length).toBe(2);
-    expect(wrapper.find('label').length).toBe(2);
-  });
-
-  describe('Style Tests', () => {
-    it('should apply the correct style to the body div', () => {
-      const wrapper = shallow(<Login />);
-      expect(wrapper.find('div').first().hasClass(bodyClassName)).toBe(true);
-    });
-
-    it('should apply the correct styles to input tags', () => {
-      const wrapper = shallow(<Login />);
-      const inputs = wrapper.find('input');
-      expect(inputs.at(0).hasClass(formBorderClassName)).toBe(true);
-      expect(inputs.at(1).hasClass(formBorderClassName)).toBe(true);
-    });
-
-    it('should apply the correct style to label tags', () => {
-      const wrapper = shallow(<Login />);
-      const labels = wrapper.find('label');
-      expect(labels.at(0).hasClass(formClassName)).toBe(true);
-      expect(labels.at(1).hasClass(formClassName)).toBe(true);
-    });
-
-    it('should apply the correct style to the button', () => {
-      const wrapper = shallow(<Login />);
-      const button = wrapper.find('button');
-      expect(button.hasClass(buttonClassName)).toBe(true);
-    });
-  });
-});
+})
+export default Login;
