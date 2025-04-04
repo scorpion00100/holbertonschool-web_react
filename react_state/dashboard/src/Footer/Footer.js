@@ -1,13 +1,13 @@
-import React from 'react';
-import { getFullYear, getFooterCopy } from '../utils/utils';
+import React from "react";
+import { getFullYear, getFooterCopy } from "../utils/utils";
 
-function Footer({ isIndex }) {
+function Footer() {
   return (
-    <footer>
+    <div className="footer">
       <p>
-        Copyright {getFullYear()} - {getFooterCopy(isIndex)}
+        Copyright {getFullYear()} - {getFooterCopy(true)}
       </p>
-    </footer>
+    </div>
   );
 }
 

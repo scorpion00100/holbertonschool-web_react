@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { StyleSheet, css } from 'aphrodite';
-import CourseShape from './CourseShape'
-import CourseListRow from './CourseListRow'
+import React from "react";
+import CourseListRow from "./CourseListRow";
+import PropTypes from "prop-types";
+import CourseShape from "./CourseShape";
+import { StyleSheet, css } from "aphrodite";
 
-const CourseList = ({ listCourses }) => {
+function CourseList({ listCourses }) {
   return (
-    <table className={css(styles.courseList)}>
+    <table id="CourseList" className={css(styles.list)}>
       <thead>
         <CourseListRow textFirstCell="Available courses" isHeader={true} />
         <CourseListRow
@@ -16,43 +16,45 @@ const CourseList = ({ listCourses }) => {
         />
       </thead>
       <tbody>
-        {listCourses.length === 0 ? (
+        {listCourses.length === 0 && (
           <CourseListRow
             textFirstCell="No course available yet"
             isHeader={false}
           />
-        ) : (
-          listCourses.map(course => (
-            <CourseListRow
-              key={course.id}
-              textFirstCell={course.name}
-              textSecondCell={course.credit}
-              isHeader={false}
-            />
-          ))
         )}
+
+        {listCourses.map((course) => (
+          <CourseListRow
+            key={course.id}
+            textFirstCell={course.name}
+            textSecondCell={course.credit}
+            isHeader={false}
+          />
+        ))}
       </tbody>
     </table>
-  )
+  );
 }
+
+CourseList.defaultProps = {
+  listCourses: [],
+};
 
 CourseList.propTypes = {
   listCourses: PropTypes.arrayOf(CourseShape),
 };
 
-CourseList.defaultProps = {
-  listCourses: [],
-}
+const cssVars = {
+  borderTableColor: "rgb(170, 170, 170);",
+};
 
 const styles = StyleSheet.create({
-  courseList: {
-    border: 'solid 1px rgb(227, 220, 220)',
-    width: '90%',
-    textAlign: 'left',
-    marginTop: '30px',
-    marginLeft: '5%',
-    fontFamily: `'Times New Roman', Times, serif`,
+  list: {
+    border: `1px solid ${cssVars.borderTableColor}`,
+    borderCollapse: "collapse",
+    width: "95%",
+    margin: "40px auto 0 auto",
   },
 });
 
-export default CourseList
+export default CourseList;

@@ -1,36 +1,42 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
-import BodySection from './BodySection';
-import { StyleSheetTestUtils, StyleSheet, css } from 'aphrodite';
+import { shallow, mount } from "enzyme";
+import React from "react";
+import BodySectionWithMarginBottom from "./BodySectionWithMarginBottom";
+import { StyleSheetTestUtils } from "aphrodite";
 
-StyleSheetTestUtils.suppressStyleInjection();
+describe("<BodySectionWithMarginBottom />", () => {
+  beforeAll(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
+  });
+  afterAll(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
 
-afterAll(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+  it("BodySectionWithMarginBottom renders without crashing", () => {
+    const wrapper = shallow(<BodySectionWithMarginBottom />);
+    expect(wrapper.exists()).toEqual(true);
+  });
 
-describe('BodySectionWithMarginBottom Component', () => {
-  it('renders correctly a BodySection component and passes props correctly', () => {
+  it("Shallowing the component should render correctly a BodySection component and that the props are passed correctly to the child component", () => {
     const wrapper = shallow(
-      <BodySectionWithMarginBottom title='test title'>
+      <BodySectionWithMarginBottom title="test title">
         <p>test children node</p>
       </BodySectionWithMarginBottom>
     );
 
-    const bodySection = wrapper.find(BodySection);
-    expect(bodySection).toHaveLength(1);
+    const BodySection = wrapper.find("BodySection");
 
-    expect(bodySection.props().title).toEqual('test title');
+    expect(BodySection).toHaveLength(1);
+    expect(BodySection.props().title).toEqual("test title");
 
-    expect(bodySection.dive().find('p').text()).toEqual('test children node');
+    const internalBody = BodySection.dive();
 
-    const div = wrapper.find('div');
-    const expectedClassName = css(StyleSheet.create({
-      bodySectionWithMargin: {
-        marginBottom: '40px',
-      },
-    }).bodySectionWithMargin);
-    expect(div.hasClass(expectedClassName)).toBe(true);
+    const h2 = internalBody.find("h2");
+    const p = internalBody.find("p");
+
+    expect(h2).toHaveLength(1);
+    expect(h2.text()).toEqual("test title");
+
+    expect(p).toHaveLength(1);
+    expect(p.text()).toEqual("test children node");
   });
 });
