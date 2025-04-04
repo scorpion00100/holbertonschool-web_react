@@ -1,41 +1,46 @@
-import { StyleSheet, css } from "aphrodite";
-import PropTypes from "prop-types";
-import React, { Component } from "react";
-import BodySection from "../BodySection/BodySection";
-import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import CourseList from "../CourseList/CourseList";
-import Footer from "../Footer/Footer";
-import Header from "../Header/Header";
-import Login from "../Login/Login";
-import Notifications from "../Notifications/Notifications";
-import { getLatestNotification } from "../utils/utils";
+import React from 'react';
+import { StyleSheet, css } from 'aphrodite';
+import PropTypes from 'prop-types'
+import logo from '../assets/holberton_logo.jpg';
+import { getFullYear, getFooterCopy } from '../utils/utils';
+import Notifications from '../Notifications/Notifications';
+import { getLatestNotification } from '../utils/utils';
+import Login from '../Login/Login';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import CourseList from '../CourseList/CourseList';
+import BodySection from '../BodySection/BodySection';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
 
 const listCourses = [
-  { id: 1, name: "ES6", credit: 60 },
-  { id: 2, name: "Webpack", credit: 20 },
-  { id: 3, name: "React", credit: 40 },
+  { id: 1, name: 'ES6', credit: 60 },
+  { id: 2, name: 'Webpack', credit: 20 },
+  { id: 3, name: 'React', credit: 40 }
 ];
 
 const listNotifications = [
-  { id: 1, type: "default", value: "New course available" },
-  { id: 2, type: "urgent", value: "New resume available" },
-  { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
+  { id: 1, type: 'default', value: 'New course available' },
+  { id: 2, type: 'urgent', value: 'New resume available' },
+  { id: 3, type: 'urgent', html: {__html: getLatestNotification()} }
 ];
 
-document.body.style.margin = 0;
-
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
-    this.handleKeyCombination = this.handleKeyCombination.bind(this);
+    this.handleKey = this.handleKey.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
-    this.state = { displayDrawer: false };
+    this.state = {
+      displayDrawer: false
+    };
   }
 
-  handleKeyCombination(e) {
-    if (e.key === "h" && e.ctrlKey) {
-      alert("Logging you out");
+  handleKey(e) {
+    const isCtrl = e.ctrlKey;
+
+    if (isCtrl && e.key === 'h') {
+      e.preventDefault();
+      alert('Logging you out');
       this.props.logOut();
     }
   }
@@ -49,110 +54,79 @@ class App extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyCombination);
+    window.addEventListener('keydown', this.handleKey);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyCombination);
+    window.removeEventListener('keydown', this.handleKey);
   }
 
   render() {
-    const { isLoggedIn, logOut } = this.props;
+    const footerText = `Copyright ${getFullYear()} - ${getFooterCopy(true)}`
     const { displayDrawer } = this.state;
-
     return (
       <>
-        <Notifications
-          listNotifications={listNotifications}
-          displayDrawer={displayDrawer}
-          handleDisplayDrawer={this.handleDisplayDrawer}
-          handleHideDrawer={this.handleHideDrawer}
-        />
-        <div className={css(styles.container)}>
-          <div className={css(styles.app)}>
-            <Header />
-          </div>
-          <div className={css(styles.appBody)}>
-            {!isLoggedIn ? (
-              <BodySectionWithMarginBottom title="Log in to continue">
-                <Login />
-              </BodySectionWithMarginBottom>
+        <Notifications listNotifications={listNotifications}
+                       displayDrawer={displayDrawer}
+                       handleDisplayDrawer={this.handleDisplayDrawer}
+                       handleHideDrawer={this.handleHideDrawer}/>
+        <div className={css(styles.app)}>
+          <Header text='School dashboard' src={logo} alt='Holberton logo'/>
+          <div className={css(styles.body)}>
+            {this.props.isLoggedIn ? (
+              <BodySectionWithMarginBottom title="Course list ">
+                <CourseList listCourses={listCourses}/>
+              </BodySectionWithMarginBottom> 
             ) : (
-              <BodySectionWithMarginBottom title="Course list">
-                <CourseList listCourses={listCourses} />
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <Login text="Login to access the full dashboard" />
               </BodySectionWithMarginBottom>
             )}
+            <BodySection title="News from the School">
+              <p>This is some random text</p>
+            </BodySection>
           </div>
-          <BodySection title="News from the School">
-            <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
-            </p>
-          </BodySection>
-
           <div className={css(styles.footer)}>
-            <Footer />
+            <Footer text={footerText} />
           </div>
         </div>
       </>
+
     );
   }
 }
 
-App.defaultProps = {
-  isLoggedIn: false,
-  logOut: () => {},
-};
+const styles = StyleSheet.create({
+  app: {
+    fontFamily: 'sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100%'
+  },
+  body: {
+    marginTop: '1rem',
+    minHeight: '100%',
+    padding: '0 3rem'
+  },
+  footer: {
+    textAlign: 'center',
+    fontStyle: 'italic',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
+    borderTop: 'solid #e11d3f'
+  }
+});
 
 App.propTypes = {
   isLoggedIn: PropTypes.bool,
-  logOut: PropTypes.func,
+  logOut: PropTypes.func
 };
 
-const cssVars = {
-  mainColor: "#e01d3f",
+App.defaultProps = {
+  isLoggedIn: false,
+  logOut: () => {}
 };
-
-const screenSize = {
-  small: "@media screen and (max-width: 900px)",
-};
-
-const styles = StyleSheet.create({
-  container: {
-    width: "calc(100% - 16px)",
-    marginLeft: "8px",
-    marginRight: "8px",
-  },
-
-  app: {
-    borderBottom: `3px solid ${cssVars.mainColor}`,
-  },
-
-  appBody: {
-    display: "flex",
-    justifyContent: "center",
-  },
-
-  footer: {
-    borderTop: `3px solid ${cssVars.mainColor}`,
-    width: "100%",
-    display: "flex",
-    justifyContent: "center",
-    position: "fixed",
-    bottom: 0,
-    fontStyle: "italic",
-    [screenSize.small]: {
-      position: "static",
-    },
-  },
-});
 
 export default App;
