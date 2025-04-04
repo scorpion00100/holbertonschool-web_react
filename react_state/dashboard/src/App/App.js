@@ -1,100 +1,158 @@
-import { StyleSheetTestUtils } from "aphrodite";
-import { shallow } from "enzyme";
-import React from "react";
-import App from "./App";
+import { StyleSheet, css } from "aphrodite";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import BodySection from "../BodySection/BodySection";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
+import CourseList from "../CourseList/CourseList";
+import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
+import Login from "../Login/Login";
+import Notifications from "../Notifications/Notifications";
+import { getLatestNotification } from "../utils/utils";
 
-describe("<App />", () => {
-  beforeAll(() => {
-    StyleSheetTestUtils.suppressStyleInjection();
-  });
-  afterAll(() => {
-    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-  });
+const listCourses = [
+  { id: 1, name: "ES6", credit: 60 },
+  { id: 2, name: "Webpack", credit: 20 },
+  { id: 3, name: "React", credit: 40 },
+];
 
-  it("App renders without crashing", () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.exists()).toEqual(true);
-  });
-  it("should contain the Notifications component", () => {
-    const wrapper = shallow(<App />);
-    wrapper.update();
-    expect(wrapper.find("Notifications")).toHaveLength(1);
-  });
-  it("should contain the Header component", () => {
-    const wrapper = shallow(<App />);
-    wrapper.update();
-    expect(wrapper.find("Header")).toHaveLength(1);
-  });
-  it("should contain the Login component", () => {
-    const wrapper = shallow(<App />);
-    wrapper.update();
-    expect(wrapper.find("Login")).toHaveLength(1);
-  });
-  it("should contain the Footer component", () => {
-    const wrapper = shallow(<App />);
-    wrapper.update();
-    expect(wrapper.find("Footer")).toHaveLength(1);
-  });
-  it("CourseList is not displayed with isLoggedIn false by default", () => {
-    const wrapper = shallow(<App />);
-    wrapper.update();
-    expect(wrapper.find("CourseList")).toHaveLength(0);
-  });
-  it("isLoggedIn is true", () => {
-    const wrapper = shallow(<App isLoggedIn />);
-    wrapper.update();
-    expect(wrapper.find("Login")).toHaveLength(0);
-    expect(wrapper.find("CourseList")).toHaveLength(1);
-  });
+const listNotifications = [
+  { id: 1, type: "default", value: "New course available" },
+  { id: 2, type: "urgent", value: "New resume available" },
+  { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
+];
 
-  it("when the keys control and h are pressed the logOut function, passed as a prop, is called and the alert function is called with the string Logging you out", () => {
-    const events = {};
-    const logout = jest.fn();
+document.body.style.margin = 0;
 
-    document.addEventListener = jest.fn((event, cb) => {
-      events[event] = cb;
-    });
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.handleKeyCombination = this.handleKeyCombination.bind(this);
+    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
+    this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    this.state = { displayDrawer: false };
+  }
 
-    window.alert = jest.fn();
+  handleKeyCombination(e) {
+    if (e.key === "h" && e.ctrlKey) {
+      alert("Logging you out");
+      this.props.logOut();
+    }
+  }
 
-    shallow(<App logOut={logout} />);
+  handleDisplayDrawer() {
+    this.setState({ displayDrawer: true });
+  }
 
-    events.keydown({ key: "h", ctrlKey: true });
+  handleHideDrawer() {
+    this.setState({ displayDrawer: false });
+  }
 
-    expect(window.alert).toHaveBeenCalledWith("Logging you out");
-    expect(logout).toHaveBeenCalled();
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyCombination);
+  }
 
-    jest.restoreAllMocks();
-  });
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyCombination);
+  }
 
-  it("Has default state for displayDrawer false", () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.state().displayDrawer).toEqual(false);
-  });
+  render() {
+    const { isLoggedIn, logOut } = this.props;
+    const { displayDrawer } = this.state;
 
-  it("displayDrawer changes to true when calling handleDisplayDrawer", () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.state().displayDrawer).toEqual(false);
+    return (
+      <>
+        <Notifications
+          listNotifications={listNotifications}
+          displayDrawer={displayDrawer}
+          handleDisplayDrawer={this.handleDisplayDrawer}
+          handleHideDrawer={this.handleHideDrawer}
+        />
+        <div className={css(styles.container)}>
+          <div className={css(styles.app)}>
+            <Header />
+          </div>
+          <div className={css(styles.appBody)}>
+            {!isLoggedIn ? (
+              <BodySectionWithMarginBottom title="Log in to continue">
+                <Login />
+              </BodySectionWithMarginBottom>
+            ) : (
+              <BodySectionWithMarginBottom title="Course list">
+                <CourseList listCourses={listCourses} />
+              </BodySectionWithMarginBottom>
+            )}
+          </div>
+          <BodySection title="News from the School">
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type and scrambled it to make a type specimen book. It has
+              survived not only five centuries, but also the leap into
+              electronic typesetting, remaining essentially unchanged. It was
+              popularised in the 1960s with the release of Letraset sheets
+              containing Lorem Ipsum passages, and more recently with desktop
+              publishing software like Aldus PageMaker including versions of
+              Lorem Ipsum.
+            </p>
+          </BodySection>
 
-    const instance = wrapper.instance();
+          <div className={css(styles.footer)}>
+            <Footer />
+          </div>
+        </div>
+      </>
+    );
+  }
+}
 
-    instance.handleDisplayDrawer();
+App.defaultProps = {
+  isLoggedIn: false,
+  logOut: () => {},
+};
 
-    expect(wrapper.state().displayDrawer).toEqual(true);
-  });
+App.propTypes = {
+  isLoggedIn: PropTypes.bool,
+  logOut: PropTypes.func,
+};
 
-  it("displayDrawer changes to false when calling handleHideDrawer", () => {
-    const wrapper = shallow(<App />);
-    expect(wrapper.state().displayDrawer).toEqual(false);
+const cssVars = {
+  mainColor: "#e01d3f",
+};
 
-    // const instance = wrapper.instance();
+const screenSize = {
+  small: "@media screen and (max-width: 900px)",
+};
 
-    wrapper.instance().handleDisplayDrawer();
+const styles = StyleSheet.create({
+  container: {
+    width: "calc(100% - 16px)",
+    marginLeft: "8px",
+    marginRight: "8px",
+  },
 
-    expect(wrapper.state().displayDrawer).toEqual(true);
+  app: {
+    borderBottom: `3px solid ${cssVars.mainColor}`,
+  },
 
-    wrapper.instance().handleHideDrawer();
+  appBody: {
+    display: "flex",
+    justifyContent: "center",
+  },
 
-    expect(wrapper.state().displayDrawer).toEqual(false);
-  });
+  footer: {
+    borderTop: `3px solid ${cssVars.mainColor}`,
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    position: "fixed",
+    bottom: 0,
+    fontStyle: "italic",
+    [screenSize.small]: {
+      position: "static",
+    },
+  },
 });
+
+export default App;
