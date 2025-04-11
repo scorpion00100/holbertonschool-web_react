@@ -33,10 +33,12 @@ class App extends React.Component {
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
     this.logIn = this.logIn.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
     this.state = {
       displayDrawer: false,
       user,
-      logOut: this.logOut
+      logOut: this.logOut,
+      listNotifications
     };
   }
 
@@ -66,6 +68,13 @@ class App extends React.Component {
     this.setState({user});
   }
 
+  markNotificationAsRead(id) {
+    const updatedList = this.state.listNotifications.filter((notification) => {
+      return notification.id !== id;
+    });
+    this.setState({listNotifications: updatedList});
+  }
+
   componentDidMount() {
     window.addEventListener('keydown', this.handleKey);
   }
@@ -77,13 +86,14 @@ class App extends React.Component {
   render() {
     const footerText = `Copyright ${getFullYear()} - ${getFooterCopy(true)}`;
     const value = {user: this.state.user, logOut: this.state.logOut};
-    const { displayDrawer } = this.state;
+    const { displayDrawer, listNotifications } = this.state;
     return (
       <AppContext.Provider value={value}>
         <Notifications listNotifications={listNotifications}
                        displayDrawer={displayDrawer}
                        handleDisplayDrawer={this.handleDisplayDrawer}
-                       handleHideDrawer={this.handleHideDrawer}/>
+                       handleHideDrawer={this.handleHideDrawer}
+                       markNotificationAsRead={this.markNotificationAsRead}/>
         <div className={css(styles.app)}>
           <Header text='School dashboard' src={logo} alt='Holberton logo'/>
           <div className={css(styles.body)}>

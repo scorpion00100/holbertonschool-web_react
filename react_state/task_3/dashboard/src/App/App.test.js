@@ -62,12 +62,18 @@ describe('Tests the App component', () => {
 
 describe('Tests the App component when isLoggedIn is true', () => {
     let user;
+    let listNotifications
     beforeAll(() => {
         user = {
             email: 'hello@world.com',
             password: 'test123!',
             isLoggedIn: true
         };
+        listNotifications = [
+            { id: 1, type: 'default', value: 'New course available' },
+            { id: 2, type: 'urgent', value: 'New resume available' },
+            { id: 3, type: 'urgent', html: {__html: <strong>hello</strong>} }
+        ];
     });
     it('Tests that the Login component is not included.', () => {
         const wrapper = shallow(<App/>);
@@ -84,5 +90,12 @@ describe('Tests the App component when isLoggedIn is true', () => {
         wrapper.setState({user});
         wrapper.instance().logOut();
         expect(wrapper.state().user.isLoggedIn).toBe(false);
+    });
+    it('checks that markNotificationAsRead works as intended', () => {
+        const wrapper = shallow(<App/>);
+        wrapper.setState({user});
+        expect(wrapper.state().listNotifications.length).toEqual(3);
+        wrapper.instance().markNotificationAsRead(1);
+        expect(wrapper.state().listNotifications.length).toEqual(2);
     });
 });
