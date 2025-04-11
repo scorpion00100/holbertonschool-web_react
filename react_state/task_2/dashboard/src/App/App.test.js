@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import App from "./App";
 
 describe('Tests the App component', () => {
@@ -29,10 +29,14 @@ describe('Tests the App component', () => {
         expect(wrapper.find('CourseList')).toHaveLength(0);
     });
     it('checks that the logOut function and the alert function is called with the good string', () => {
-        const mockLogOut = jest.fn();
-        const logger = jest.spyOn(window, 'alert');
-        expect(logger);
-        expect(mockLogOut);
+        window.alert = jest.fn();
+        const wrapper = mount(<App />);
+        wrapper.setState({user: {isLoggedIn: true}});
+        expect(wrapper.state().user.isLoggedIn).toBe(true);
+        const event = new KeyboardEvent('keydown', { key: 'h', ctrlKey: true });
+        window.dispatchEvent(event);
+        expect(window.alert).toHaveBeenCalledWith('Logging you out');
+        expect(wrapper.state().user.isLoggedIn).toBe(false);
         jest.restoreAllMocks();
     });
     it('checks that default state for displayDrawer is false', () => {
@@ -50,15 +54,35 @@ describe('Tests the App component', () => {
         wrapper.instance().handleHideDrawer();
         expect(wrapper.state().displayDrawer).toBe(false);
     });
+    it('checks that the logIn function updates the state correctly', () => {
+        wrapper.instance().logIn();
+        expect(wrapper.state().user.isLoggedIn).toBe(true);
+    });
 });
 
 describe('Tests the App component when isLoggedIn is true', () => {
+    let user;
+    beforeAll(() => {
+        user = {
+            email: 'hello@world.com',
+            password: 'test123!',
+            isLoggedIn: true
+        };
+    });
     it('Tests that the Login component is not included.', () => {
-        const wrapper = shallow(<App isLoggedIn={true}/>);
+        const wrapper = shallow(<App/>);
+        wrapper.setState({user});
         expect(wrapper.find('Login')).toHaveLength(0);
     });
     it('should contain the Notifications component', () => {
-        const wrapper = shallow(<App isLoggedIn={true}/>);
+        const wrapper = shallow(<App/>);
+        wrapper.setState({user});
         expect(wrapper.find('CourseList')).toHaveLength(1);
+    });
+    it('checks that the logOut function updates the state correctly', () => {
+        const wrapper = shallow(<App/>);
+        wrapper.setState({user});
+        wrapper.instance().logOut();
+        expect(wrapper.state().user.isLoggedIn).toBe(false);
     });
 });

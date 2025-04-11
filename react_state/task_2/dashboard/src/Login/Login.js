@@ -1,11 +1,11 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import { StyleSheet, css } from 'aphrodite';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoggedIn: false,
             email: "",
             password: "",
             enableSubmit: false
@@ -18,7 +18,7 @@ class Login extends React.Component {
 
     handleLoginSubmit(e) {
         e.preventDefault();
-        this.setState({isLoggedIn: true});
+        this.props.logIn(this.state.email, this.state.password);
     }
 
     handleChangeEmail(newEmail) {
@@ -60,6 +60,14 @@ class Login extends React.Component {
         );
     }
 }
+
+Login.propTypes = {
+    logIn: PropTypes.func
+};
+
+Login.defaultProps = {
+    logIn: () => {}
+};
 
 const styles = StyleSheet.create({
     maringRight: {

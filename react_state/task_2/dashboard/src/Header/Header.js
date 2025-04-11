@@ -1,14 +1,26 @@
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import AppContext from '../App/AppContext';
 
-export default function Header(props) {
-    return (
-        <header className={css(styles.appHeader)}>
-            <img src={props.src} alt={props.alt} className={css(styles.appHeaderImg)}/>
-            <h1>{props.text}</h1>
-        </header>
-    );
+class Header extends React.Component {
+    render() {
+        return (
+            <>
+                <header className={css(styles.appHeader)}>
+                    <img src={this.props.src} alt={this.props.alt} className={css(styles.appHeaderImg)}/>
+                    <h1>{this.props.text}</h1>
+                </header>
+                {this.context.user.isLoggedIn ? (
+                    <section id='logoutSection'>
+                        Welcome <strong>{this.context.user.email}</strong> <a onClick={() => {this.context.logOut()}}><em>(logout)</em></a>
+                    </section>
+                ) : null}
+                
+            </>
+        );
+    }
 }
+Header.contextType = AppContext;
 
 const styles = StyleSheet.create({
     appHeader: {
@@ -24,3 +36,5 @@ const styles = StyleSheet.create({
         width: 250
     }
 });
+
+export default Header;

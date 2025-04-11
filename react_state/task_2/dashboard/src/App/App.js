@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
-import PropTypes from 'prop-types'
 import logo from '../assets/holberton_logo.jpg';
 import { getFullYear, getFooterCopy } from '../utils/utils';
 import Notifications from '../Notifications/Notifications';
@@ -11,6 +10,8 @@ import Footer from '../Footer/Footer';
 import CourseList from '../CourseList/CourseList';
 import BodySection from '../BodySection/BodySection';
 import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
+import { user, logOut } from './AppContext';
+import AppContext from './AppContext';
 
 const listCourses = [
   { id: 1, name: 'ES6', credit: 60 },
@@ -30,8 +31,12 @@ class App extends React.Component {
     this.handleKey = this.handleKey.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    this.logIn = this.logIn.bind(this);
+    this.logOut = this.logOut.bind(this);
     this.state = {
-      displayDrawer: false
+      displayDrawer: false,
+      user,
+      logOut: this.logOut
     };
   }
 
@@ -41,16 +46,24 @@ class App extends React.Component {
     if (isCtrl && e.key === 'h') {
       e.preventDefault();
       alert('Logging you out');
-      this.props.logOut();
+      this.state.logOut();
     }
   }
 
   handleDisplayDrawer() {
-    this.setState({ displayDrawer: true });
+    this.setState({displayDrawer: true});
   }
 
   handleHideDrawer() {
-    this.setState({ displayDrawer: false });
+    this.setState({displayDrawer: false});
+  }
+
+  logIn(email, password) {
+    this.setState({user: { email, password, isLoggedIn: true}});
+  }
+
+  logOut() {
+    this.setState({user});
   }
 
   componentDidMount() {
@@ -62,10 +75,11 @@ class App extends React.Component {
   }
 
   render() {
-    const footerText = `Copyright ${getFullYear()} - ${getFooterCopy(true)}`
+    const footerText = `Copyright ${getFullYear()} - ${getFooterCopy(true)}`;
+    const value = {user: this.state.user, logOut: this.state.logOut};
     const { displayDrawer } = this.state;
     return (
-      <>
+      <AppContext.Provider value={value}>
         <Notifications listNotifications={listNotifications}
                        displayDrawer={displayDrawer}
                        handleDisplayDrawer={this.handleDisplayDrawer}
@@ -73,13 +87,13 @@ class App extends React.Component {
         <div className={css(styles.app)}>
           <Header text='School dashboard' src={logo} alt='Holberton logo'/>
           <div className={css(styles.body)}>
-            {this.props.isLoggedIn ? (
+            {this.state.user.isLoggedIn ? (
               <BodySectionWithMarginBottom title="Course list ">
                 <CourseList listCourses={listCourses}/>
               </BodySectionWithMarginBottom> 
             ) : (
               <BodySectionWithMarginBottom title="Log in to continue">
-                <Login text="Login to access the full dashboard" />
+                <Login text="Login to access the full dashboard" logIn={this.logIn}/>
               </BodySectionWithMarginBottom>
             )}
             <BodySection title="News from the School">
@@ -90,7 +104,7 @@ class App extends React.Component {
             <Footer text={footerText} />
           </div>
         </div>
-      </>
+      </AppContext.Provider>
 
     );
   }
@@ -118,15 +132,5 @@ const styles = StyleSheet.create({
     borderTop: 'solid #e11d3f'
   }
 });
-
-App.propTypes = {
-  isLoggedIn: PropTypes.bool,
-  logOut: PropTypes.func
-};
-
-App.defaultProps = {
-  isLoggedIn: false,
-  logOut: () => {}
-};
 
 export default App;
