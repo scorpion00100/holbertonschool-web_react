@@ -1,4 +1,4 @@
-# 
+# React Redux
 # Requirements
 
     All your files will be interpreted/compiled on Ubuntu 20.04 LTS using node 20.x.x and npm 10.x.x
