@@ -1,4 +1,4 @@
-import BodySection from '../BodySection/BodySection';
+import BodySection from './BodySection';
 import './BodySectionWithMarginBottom.css';
 
 export default function BodySectionWithMarginBottom({ title, children }) {
