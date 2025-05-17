@@ -13,6 +13,7 @@ import { getLatestNotification } from '../utils/utils';
 import WithLogging from '../HOC/WithLogging';
 import AppContext, { defaultUser, defaultLogOut } from './AppContext';
 import { displayNotificationDrawer, hideNotificationDrawer, loginRequest } from '../actions/uiActionCreators';
+import { fetchNotifications } from '../actions/notificationActionCreators';
 
 export class App extends React.Component {
   static contextType = AppContext;
@@ -22,21 +23,16 @@ export class App extends React.Component {
     this.state = {
       user: defaultUser,
       logOut: defaultLogOut,
-      listNotifications: [
-        { id: 1, type: 'default', value: 'New course available' },
-        { id: 2, type: 'urgent', value: 'New resume available' },
-        { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-      ],
     };
   }
 
   markNotificationAsRead = (id) => {
-    const filteredNotifications = this.state.listNotifications.filter(notification => notification.id !== id);
-    this.setState({ listNotifications: filteredNotifications });
+     console.log(`Notification ${id} has been marked as read`);
   };
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
+    this.props.fetchNotifications();
   }
 
   componentWillUnmount() {
@@ -51,8 +47,9 @@ export class App extends React.Component {
   };
 
   render() {
-    const { user, listNotifications } = this.state;
-    const { displayDrawer, isLoggedIn, displayNotificationDrawer, hideNotificationDrawer, loginRequest } = this.props;
+    const { user } = this.state;
+    const { displayDrawer, isLoggedIn, displayNotificationDrawer, hideNotificationDrawer, loginRequest, listNotifications } = this.props;
+    console.log("voici ma liste de notification", listNotifications);
     const isIndex = true;
     const listCourses = [
       { id: 1, name: 'ES6', credit: 60 },
@@ -119,9 +116,13 @@ const styles = StyleSheet.create({
 
 // Mettez à jour mapStateToProps et mapDispatchToProps
 export function mapStateToProps(state) {
+  const notificationsMap = state.notifications.get('notifications');
+  const listNotifications = notificationsMap ? notificationsMap.toJS() : [];
+
   return {
-    isLoggedIn: state.get('isUserLoggedIn'),
-    displayDrawer: state.get('isNotificationDrawerVisible'),
+    isLoggedIn: state.ui.get('isUserLoggedIn'),
+    displayDrawer: state.ui.get('isNotificationDrawerVisible'),
+    listNotifications: Object.values(listNotifications),
   };
 }
 
@@ -129,6 +130,7 @@ const mapDispatchToProps = {
   displayNotificationDrawer,
   hideNotificationDrawer,
   loginRequest,
+  fetchNotifications,
 };
 
 // Définir propTypes et defaultProps
@@ -138,6 +140,8 @@ App.propTypes = {
   displayNotificationDrawer: PropTypes.func.isRequired,
   hideNotificationDrawer: PropTypes.func.isRequired,
   loginRequest: PropTypes.func.isRequired,
+  fetchNotifications: PropTypes.func.isRequired,
+  listNotifications: PropTypes.array.isRequired,
 };
 
 App.defaultProps = {
