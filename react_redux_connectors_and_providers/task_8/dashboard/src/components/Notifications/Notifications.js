@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
 import NotificationItem from './NotificationItem';
-import { fetchNotifications, markAsRead } from '../actions/notificationActionCreators';
-import { getUnreadNotifications } from '../selectors/notificationSelector';
+import { fetchNotifications, markAsRead, setNotificationFilter } from '../actions/notificationActionCreators';
+import { getUnreadNotificationsByType } from '../selectors/notificationSelector';
 
 
 export class Notifications extends React.PureComponent {
@@ -14,7 +14,8 @@ export class Notifications extends React.PureComponent {
     displayDrawer: PropTypes.bool,
     handleDisplayDrawer: PropTypes.func,
     handleHideDrawer: PropTypes.func,
-    markAsRead: PropTypes.func
+    markAsRead: PropTypes.func,
+    setNotificationFilter: PropTypes.func,
   }
 
   static defaultProps = {
@@ -24,6 +25,7 @@ export class Notifications extends React.PureComponent {
     handleDisplayDrawer: () => {},
     handleHideDrawer: () => {},
     markAsRead: () => { },
+    setNotificationFilter: () => {},
   }
 
   componentDidMount() {
@@ -35,6 +37,15 @@ export class Notifications extends React.PureComponent {
     console.log('Close button has been clicked');
     this.props.handleHideDrawer();
   }
+
+  handleFilterUrgent = () => {
+    this.props.setNotificationFilter('urgent');
+  }
+
+  handleFilterDefault = () => {
+    this.props.setNotificationFilter('default');
+  }
+
 
   render() {
     const { displayDrawer, listNotifications, handleDisplayDrawer, markAsRead } = this.props;
@@ -69,7 +80,17 @@ export class Notifications extends React.PureComponent {
             </button>
             <ul className={css(styles.ul)}>
               {notificationItems.size
-                ? <><p>Here is the list of notifications</p>{notificationItems}</>
+                ? (
+                  <>
+                    <p>Here is the list of notifications</p>
+
+                    <div className={css(styles.filterButtons)}>
+                      <button onClick={this.handleFilterUrgent}>‼️</button>
+                      <button onClick={this.handleFilterDefault}>?</button>
+                    </div>
+                    {notificationItems}
+                  </>
+                )
                 : <NotificationItem type="default" value="No new notification for now" />
               }
             </ul>
@@ -99,13 +120,13 @@ const styles = StyleSheet.create({
     width: '30%',
     right: '1rem',
     top: '4rem',
+    backgroundColor: 'white',
     '@media (max-width: 900px)': {
       inset: 0,
       width: '100%',
       height: '100%',
       border: 'none',
       padding: 0,
-      backgroundColor: 'white',
     },
   },
   ul: {
@@ -142,17 +163,33 @@ const styles = StyleSheet.create({
       top: 0,
       right: '.5rem'
     },
+  },
+  filterButtons: {
+    marginTop: '10px',
+    display: 'flex',
+    gap: '10px',
+    justifyContent: 'center',
+    button: {
+      padding: '5px 10px',
+      cursor: 'pointer',
+      border: '1px solid #ccc',
+      backgroundColor: '#f5f5f5',
+      ':hover': {
+        backgroundColor: '#e6e6e6'
+      }
+    }
   }
 });
 
 const mapDispatchToProps = {
   fetchNotifications,
-  markAsRead
+  markAsRead,
+  setNotificationFilter
 }
 
 function mapStateToProps(state) {
   return {
-    listNotifications: getUnreadNotifications(state.notifications)
+    listNotifications: getUnreadNotificationsByType(state.notifications)
   }
 }
 
