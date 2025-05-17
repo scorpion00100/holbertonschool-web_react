@@ -1,5 +1,7 @@
-import { SELECT_COURSE, UNSELECT_COURSE } from './courseActionTypes';
+import { SELECT_COURSE, UNSELECT_COURSE, FETCH_COURSE_SUCCESS } from './courseActionTypes';
 import { bindActionCreators } from 'redux';
+
+const fetch = require('node-fetch');
 
 // Action creator for selecting a course
 export function selectCourse(index) {
@@ -26,4 +28,26 @@ export function boundCourseActions(dispatch) {
     },
     dispatch
   );
+}
+
+export function setCourses(courses) {
+  return {
+    type: FETCH_COURSE_SUCCESS,
+    courses
+  }
+}
+
+export function fetchCourses() {
+  return async (dispatch) => {
+    return fetch('/courses.json')
+      .then((response) => response.json())
+      .then((json) => {
+        const normalizedCourses = json.map(course => ({
+          ...course,
+          id: String(course.id)
+        }));
+        console.log("Courses after normalization:", normalizedCourses);
+        dispatch(setCourses(normalizedCourses));
+      });
+  }
 }
