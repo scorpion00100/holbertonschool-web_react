@@ -1,115 +1,107 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
 import NotificationItem from './NotificationItem';
-import { fetchNotifications, markAsRead, setNotificationFilter } from '../actions/notificationActionCreators';
-import { getUnreadNotificationsByType } from '../selectors/notificationSelector';
-
-
-export class Notifications extends React.PureComponent {
-  static propTypes = {
-    listNotifications: PropTypes.object,
-    fetchNotifications: PropTypes.func,
-    displayDrawer: PropTypes.bool,
-    handleDisplayDrawer: PropTypes.func,
-    handleHideDrawer: PropTypes.func,
-    markAsRead: PropTypes.func,
-    setNotificationFilter: PropTypes.func,
-  }
-
-  static defaultProps = {
-    displayDrawer: false,
-    listNotifications: {},
-    fetchNotifications: () => {},
-    handleDisplayDrawer: () => {},
-    handleHideDrawer: () => {},
-    markAsRead: () => { },
-    setNotificationFilter: () => {},
-  }
-
-  componentDidMount() {
-    const { fetchNotifications } = this.props;
-    fetchNotifications();
-  }
-
-  handleClose = () => {
-    console.log('Close button has been clicked');
-    this.props.handleHideDrawer();
-  }
-
-  handleFilterUrgent = () => {
-    this.props.setNotificationFilter('urgent');
-  }
-
-  handleFilterDefault = () => {
-    this.props.setNotificationFilter('default');
-  }
-
-
-  render() {
-    const { displayDrawer, listNotifications, handleDisplayDrawer, markAsRead } = this.props;
-    const notificationItems = listNotifications.map(notificationItem =>
-      <NotificationItem
-        type={notificationItem.type}
-        value={notificationItem.value}
-        html={notificationItem.html}
-        markAsRead={() => markAsRead(notificationItem.id || notificationItem.guid)}
-        key={notificationItem.id || notificationItem.guid}
-        id={notificationItem.id || notificationItem.guid}
-      />
-    ).valueSeq();
-
-    return (
-      <>
-        {!displayDrawer && (
-          <div id="menu-item" className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
-            <p>Your notifications</p>
-          </div>
-        )}
-
-        {displayDrawer && (
-          <div className={css(styles.notifications)}>
-            <button
-              id="close-btn"
-              className={css(styles.closeBtn)}
-              aria-label="Close"
-              onClick={this.handleClose}
-            >
-              x
-            </button>
-            <ul className={css(styles.ul)}>
-              {notificationItems.size
-                ? (
-                  <>
-                    <p>Here is the list of notifications</p>
-
-                    <div className={css(styles.filterButtons)}>
-                      <button onClick={this.handleFilterUrgent}>‼️</button>
-                      <button onClick={this.handleFilterDefault}>?</button>
-                    </div>
-                    {notificationItems}
-                  </>
-                )
-                : <NotificationItem type="default" value="No new notification for now" />
-              }
-            </ul>
-          </div>
-        )}
-      </>
-    );
-  }
-}
 
 const opacityFrames = {
   '0%': { opacity: 0.5 },
-  '100%': { opacity: 1 }
+  '100%': { opacity: 1 },
 };
 
 const bounceFrames = {
   '0%': { transform: 'translateY(0)' },
   '50%': { transform: 'translateY(-5px)' },
-  '100%': { transform: 'translateY(5px)' }
+  '100%': { transform: 'translateY(5px)' },
+};
+
+const Notifications = ({
+  displayDrawer,
+  listNotifications,
+  handleDisplayDrawer,
+  handleHideDrawer,
+  markAsRead,
+  setNotificationFilter
+}) => {
+  const handleClose = () => {
+    console.log('Close button has been clicked');
+    handleHideDrawer();
+  };
+
+  const handleFilterUrgent = () => {
+    setNotificationFilter('urgent');
+  };
+
+  const handleFilterDefault = () => {
+    setNotificationFilter('default');
+  };
+
+  const notificationItems = listNotifications.map(notificationItem => (
+    <NotificationItem
+      type={notificationItem.type}
+      value={notificationItem.value}
+      html={notificationItem.html}
+      markAsRead={() => markAsRead(notificationItem.id || notificationItem.guid)}
+      key={notificationItem.id || notificationItem.guid}
+      id={notificationItem.id || notificationItem.guid}
+    />
+  )).valueSeq();
+
+  return (
+    <>
+      {!displayDrawer && (
+        <div id="menu-item" className={css(styles.menuItem)} onClick={handleDisplayDrawer}>
+          <p>Your notifications</p>
+        </div>
+      )}
+
+      {displayDrawer && (
+        <div className={css(styles.notifications)}>
+          <button
+            id="close-btn"
+            className={css(styles.closeBtn)}
+            aria-label="Close"
+            onClick={handleClose}
+          >
+            x
+          </button>
+          <ul className={css(styles.ul)}>
+            {notificationItems.size
+              ? (
+                <>
+                  <p>Here is the list of notifications</p>
+
+                  <div className={css(styles.filterButtons)}>
+                    <button onClick={handleFilterUrgent}>‼️</button>
+                    <button onClick={handleFilterDefault}>?</button>
+                  </div>
+                  {notificationItems}
+                </>
+              )
+              : <NotificationItem type="default" value="No new notification for now" />
+            }
+          </ul>
+        </div>
+      )}
+    </>
+  );
+};
+
+Notifications.propTypes = {
+  listNotifications: PropTypes.object,
+  displayDrawer: PropTypes.bool,
+  handleDisplayDrawer: PropTypes.func,
+  handleHideDrawer: PropTypes.func,
+  markAsRead: PropTypes.func,
+  setNotificationFilter: PropTypes.func,
+};
+
+Notifications.defaultProps = {
+  displayDrawer: false,
+  listNotifications: {},
+  handleDisplayDrawer: () => {},
+  handleHideDrawer: () => {},
+  markAsRead: () => {},
+  setNotificationFilter: () => {},
 };
 
 const styles = StyleSheet.create({
@@ -181,16 +173,4 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapDispatchToProps = {
-  fetchNotifications,
-  markAsRead,
-  setNotificationFilter
-}
-
-function mapStateToProps(state) {
-  return {
-    listNotifications: getUnreadNotificationsByType(state.notifications)
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
+export default Notifications;
