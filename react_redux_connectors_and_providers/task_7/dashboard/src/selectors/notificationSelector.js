@@ -1,13 +1,14 @@
-import { createSelector } from 'reselect';
+import { Map } from 'immutable';
 
-// Selector to get the filter type
-export const filterTypeSelected = (state) => state.get('filter');
+export function filterTypeSelected(state) {
+  return state.get('filter');
+}
 
-// Selector to get all notifications
-export const getNotifications = (state) => state.get('notifications');
+export const getNotifications = (state) => {
+  return Map(state.get('notifications').get('messages'));
+};
 
-// Selector to get unread notifications
-export const getUnreadNotifications = createSelector(
-  [getNotifications],
-  (notifications) => notifications.filter((notification) => !notification.get('isRead'))
-);
+
+export function getUnreadNotifications(state) {
+  return getNotifications(state).filter(notification => notification.isRead === false);
+}
