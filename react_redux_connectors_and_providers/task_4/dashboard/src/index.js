@@ -3,14 +3,19 @@ import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import uiReducer from './reducers/uiReducer';
+import rootReducer from './reducers/rootReducer';
 import App from './App/App';
 
-// Create the Redux store with thunk (middleware) and Devtools
+// Utilisation de Redux DevTools uniquement en développement
+const composeEnhancers =
+  process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    : compose;
+
+// Crée le store Redux avec thunk comme middleware
 const store = createStore(
-  uiReducer,
-  composeWithDevTools(applyMiddleware(thunk))
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk))
 );
 
 ReactDOM.render(

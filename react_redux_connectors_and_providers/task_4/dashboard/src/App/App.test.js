@@ -80,14 +80,20 @@ describe('<App />', () => {
 
 describe('mapStateToProps', () => {
   it('should return the correct props based on state', () => {
-    const state = fromJS({
-      isUserLoggedIn: true,
-    });
+    const state = {
+      ui: fromJS({
+        isUserLoggedIn: true,
+        isNotificationDrawerVisible: false,
+      }),
+    };
 
     const expectedProps = {
       isLoggedIn: true,
+      displayDrawer: false,
     };
 
-    expect(mapStateToProps(state)).toEqual(expectedProps);
+    const props = mapStateToProps(state);
+
+    expect(props).toEqual(expectedProps);
   });
 });
