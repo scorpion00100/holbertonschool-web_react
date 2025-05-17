@@ -13,6 +13,7 @@ describe('<App />', () => {
     isUserLoggedIn: false,
     user: {}
   });
+
   let wrapper, store;
 
   beforeEach(() => {
@@ -29,7 +30,9 @@ describe('<App />', () => {
   });
 
   describe('isLoggedIn = false', () => {
-    it('renders without crashing', () => { });
+    it('renders without crashing', () => {
+      expect(wrapper.exists()).toBe(true);
+    });
 
     it('contains the Notifications component', () => {
       expect(wrapper.find('Notifications')).toHaveLength(1);
@@ -85,24 +88,6 @@ describe('<App />', () => {
     });
   });
 
-  describe('state.displayDrawer', () => {
-    it('has default value set to false', () => {
-      expect(wrapper.state('displayDrawer')).toBe(false);
-    });
-
-    it('changes value to true when handleDisplayDrawer() is called', () => {
-      wrapper.instance().handleDisplayDrawer();
-      expect(wrapper.state('displayDrawer')).toBe(true);
-    });
-
-    it('changes value to false when handleHideDrawer() is called', () => {
-      wrapper.setState({ displayDrawer: true });
-      wrapper.instance().handleHideDrawer();
-
-      expect(wrapper.state('displayDrawer')).toBe(false);
-    });
-  });
-
   describe('state.listNotifications', () => {
     it('removes a notification when markNotificationAsRead is called', () => {
       const listMock = [
@@ -117,13 +102,37 @@ describe('<App />', () => {
     });
   });
 
+  describe('Redux state management', () => {
+    it('has displayDrawer set to false from Redux state', () => {
+      expect(wrapper.props().displayDrawer).toBe(false);
+    });
+
+    it('updates displayDrawer based on Redux state', () => {
+      store = mockStore(fromJS({
+        isNotificationDrawerVisible: true,
+        isUserLoggedIn: false,
+        user: {}
+      }));
+
+      wrapper = mount(
+        <Provider store={store}>
+          <App />
+        </Provider>
+      ).find('App');
+
+      expect(wrapper.props().displayDrawer).toBe(true);
+    });
+  });
+
   describe('mapStateToProps', () => {
     it('returns the right object when passing a state', () => {
       const state = fromJS({
-        isUserLoggedIn: true
+        isUserLoggedIn: true,
+        isNotificationDrawerVisible: true
       });
       const expected = {
-        isLoggedIn: true
+        isLoggedIn: true,
+        displayDrawer: true,
       };
       expect(mapStateToProps(state)).toEqual(expected);
     });
