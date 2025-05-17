@@ -1,30 +1,34 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import PropTypes from 'prop-types';
 import NotificationItem from './NotificationItem';
-import NotificationItemShape from './NotificationItemShape';
+import { fetchNotifications, markAsRead } from '../actions/notificationActionCreators';
+import { getUnreadNotifications } from '../selectors/notificationSelector';
 
-class Notifications extends React.PureComponent {
+
+export class Notifications extends React.PureComponent {
   static propTypes = {
+    listNotifications: PropTypes.object,
+    fetchNotifications: PropTypes.func,
     displayDrawer: PropTypes.bool,
-    listNotifications: PropTypes.arrayOf(NotificationItemShape),
     handleDisplayDrawer: PropTypes.func,
     handleHideDrawer: PropTypes.func,
-    markNotificationAsRead: PropTypes.func,
-    fetchNotifications: PropTypes.func,
+    markAsRead: PropTypes.func
   }
 
   static defaultProps = {
     displayDrawer: false,
-    listNotifications: [],
+    listNotifications: {},
+    fetchNotifications: () => {},
     handleDisplayDrawer: () => {},
     handleHideDrawer: () => {},
-    markNotificationAsRead: () => {},
-    fetchNotifications: () => {},
+    markAsRead: () => { },
   }
 
   componentDidMount() {
-    this.props.fetchNotifications();
+    const { fetchNotifications } = this.props;
+    fetchNotifications();
   }
 
   handleClose = () => {
@@ -33,8 +37,18 @@ class Notifications extends React.PureComponent {
   }
 
   render() {
-    const { displayDrawer, listNotifications, handleDisplayDrawer, markNotificationAsRead } = this.props;
-    console.log("ma listNotifications", listNotifications.map);
+    const { displayDrawer, listNotifications, handleDisplayDrawer, markAsRead } = this.props;
+    const notificationItems = listNotifications.map(notificationItem =>
+      <NotificationItem
+        type={notificationItem.type}
+        value={notificationItem.value}
+        html={notificationItem.html}
+        markAsRead={() => markAsRead(notificationItem.id || notificationItem.guid)}
+        key={notificationItem.id || notificationItem.guid}
+        id={notificationItem.id || notificationItem.guid}
+      />
+    ).valueSeq();
+
     return (
       <>
         {!displayDrawer && (
@@ -53,26 +67,12 @@ class Notifications extends React.PureComponent {
             >
               x
             </button>
-            <p>Here is the list of notifications</p>
-            {listNotifications.length === 0 ? (
-              <NotificationItem
-                type="default"
-                value="No new notification for now"
-              />
-            ) : (
-              <ul className={css(styles.ul)}>
-                {listNotifications.map(notification => (
-                  <NotificationItem
-                    key={notification.guid}
-                    type={notification.type}
-                    value={notification.value}
-                    html={notification.html}
-                    markAsRead={markNotificationAsRead(notification.guid)}
-                    id={notification.guid}
-                  />
-                ))}
-              </ul>
-            )}
+            <ul className={css(styles.ul)}>
+              {notificationItems.size
+                ? <><p>Here is the list of notifications</p>{notificationItems}</>
+                : <NotificationItem type="default" value="No new notification for now" />
+              }
+            </ul>
           </div>
         )}
       </>
@@ -145,4 +145,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Notifications;
+const mapDispatchToProps = {
+  fetchNotifications,
+  markAsRead
+}
+
+function mapStateToProps(state) {
+  return {
+    listNotifications: getUnreadNotifications(state.notifications)
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);
